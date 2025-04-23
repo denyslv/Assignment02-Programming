@@ -29,7 +29,11 @@ class Player {
   }
 
   set playerNumber(number) {
-    this.#playerNumber = number;
+    if (!Number.isInteger(number) || number < 1 || number > 23) {
+      console.log('Player number must be an integer between 1 and 23');
+    } else {
+      this.#playerNumber = number;
+    }
   }
 
   get ratings() {
@@ -37,8 +41,21 @@ class Player {
   }
 
   set ratings(ratings) {
-    this.#ratings = ratings;
-  }
+    // Validate ratings array is of size 5
+    if (!Array.isArray(ratings) || ratings.length !== 5) {
+      this.#ratings = new Array(5).fill(0);
+      return;
+    }
+    
+    // Validate and set ratings
+    //used https://www.w3schools.com/jsref/jsref_map.asp Ma method
+    //The Array.map() method creates a new array from the results of calling a function for every element.
+    this.#ratings = ratings.map(function(rating) {
+      const num = Number(rating);
+      //if true return num, if false return 0
+      return (Number.isInteger(num) && num >= 0 && num <= 5) ? num : 0;
+    });
+    }
 
 
   get currentSquadMember() {
@@ -46,7 +63,8 @@ class Player {
   }
 
   set currentSquadMember(csm) {
-    this.#currentSquadMember = csm;
+    //comvert csm to boolean
+    this.#currentSquadMember = Boolean(csm);
   }
 
   toString() {
