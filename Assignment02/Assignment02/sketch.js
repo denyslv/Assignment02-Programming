@@ -1,158 +1,179 @@
 let teamOfPlayers;
 
-function setup() {
-    createCanvas(400, 400);
-    // Ask for number of players and create team
-    let numPlayers = prompt("How many players are on the team?");
-    teamOfPlayers = new Team(parseInt(numPlayers));
+function createTeam() {
+    let numPlayers = parseInt(document.getElementById('numPlayers').value);
     
-    // Display initial menu
-    displayMenu();
+    if (numPlayers < 0 || numPlayers > 40) {
+        document.getElementById('showInfo').innerHTML = "Number of players must be between 0 and 40.";
+        return;
+    }
+    
+    teamOfPlayers = new Team(numPlayers);
+    
+    // Hide prompt menu and show main menu
+    document.getElementById('promptMenu').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
 }
 
-function displayMenu() {
-    let menu = "Main Menu:\n" +
-               "1 - Add a Player\n" +
-               "2 - Add player ratings\n" +
-               "3 - Add a player to the squad\n" +
-               "4 - Remove a player from the squad\n" +
-               "5 - List all players\n" +
-               "6 - List all players currently on the squad\n" +
-               "7 - List players whose average rating is greater than a given average\n" +
-               "8 - List the players names with their average ratings\n" +
-               "9 - Display average player rating\n" +
-               "10 - Display player with the lowest average rating\n" +
-               "11 - Display player with the highest average rating\n" +
-               "0 - Exit";
+function mainMenuSelection() {
+    // Hide all menus first
+    document.getElementById('addPlayerMenu').classList.add('hidden');
+    document.getElementById('addRatingsMenu').classList.add('hidden');
+    document.getElementById('allPlayersRatings').classList.add('hidden');
     
-    console.log(menu);
-}
-
-function handleMenuSelection(choice) {
+    // Get selected option
+    let choice = document.querySelector('input[name="mainChoices"]:checked').value;
+    
     switch(choice) {
-        case "1":
-            addPlayer();
+        case "addPlayer":
+            document.getElementById('addPlayerMenu').classList.remove('hidden');
             break;
-        case "2":
-            addPlayerRatings();
+        case "addRatings":
+            document.getElementById('addRatingsMenu').classList.remove('hidden');
+            document.getElementById('allPlayersRatings').classList.remove('hidden');
+            updatePlayerDropdown();
+            updatePlayersList();
             break;
-        case "3":
-            addToSquad();
+        case "addToSquad":
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listPlayers();
+            let index = prompt("Enter player index to add to squad:");
+            teamOfPlayers.players[index].currentSquadMember = true;
+            document.getElementById('showInfo').innerHTML = "Player added to squad.";
             break;
-        case "4":
-            removeFromSquad();
+        case "removeFromSquad":
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listPlayers();
+            let removeIndex = prompt("Enter player index to remove from squad:");
+            let player = teamOfPlayers.deRegisterPlayer(removeIndex);
+            if (player) {
+                document.getElementById('showInfo').innerHTML = "Player removed from squad.";
+            } else {
+                document.getElementById('showInfo').innerHTML = "Player not found or already not in squad.";
+            }
             break;
-        case "5":
-            listAllPlayers();
+        case "listPlayers":
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listPlayers();
             break;
-        case "6":
-            listCurrentSquad();
+        case "listCurrentSquad":
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listCurrentPlayers();
             break;
-        case "7":
-            listAboveAverage();
+        case "listAboveAverage":
+            let rating = prompt("Enter minimum average rating:");
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listPlayersAboveGivenAverageRating(parseFloat(rating));
             break;
-        case "8":
-            listWithAverages();
+        case "listWithAverages":
+            document.getElementById('showInfo').innerHTML = teamOfPlayers.listOfPlayerWithAverageRating();
             break;
-        case "9":
-            displayAverageRating();
+        case "displayAverage":
+            document.getElementById('showInfo').innerHTML = "Average player rating: " + teamOfPlayers.averageOfPlayersAvgRating();
             break;
-        case "10":
-            displayLowestRating();
+        case "displayLowest":
+            let lowestPlayer = teamOfPlayers.playerWithLowestAverageRating();
+            if (lowestPlayer) {
+                document.getElementById('showInfo').innerHTML = "Player with lowest average rating:\n" + lowestPlayer.toString();
+            } else {
+                document.getElementById('showInfo').innerHTML = "No players in the team.";
+            }
             break;
-        case "11":
-            displayHighestRating();
+        case "displayHighest":
+            let highestPlayer = teamOfPlayers.playerWithHighestAverageRating();
+            if (highestPlayer) {
+                document.getElementById('showInfo').innerHTML = "Player with highest average rating:\n" + highestPlayer.toString();
+            } else {
+                document.getElementById('showInfo').innerHTML = "No players in the team.";
+            }
             break;
-        case "0":
-            exit();
-            break;
-        default:
-            console.log("Invalid choice. Please try again.");
     }
 }
 
 function addPlayer() {
-    let name = prompt("Enter player name:");
-    let playerNumber = parseInt(prompt("Enter player number (1-23):"));
-    let currentSquadMember = confirm("Is this player in the current squad?");
+    let name = document.getElementById('name').value;
+    let playerNumber = parseInt(document.getElementById('playerNumber').value);
+    let currentSquadMember = document.getElementById('yes').checked;
     
     let player = new Player(name, currentSquadMember, playerNumber);
     teamOfPlayers.addPlayer(player);
-    console.log("Player added successfully.");
+    
+    // Clear form and show success message
+    document.getElementById('name').value = '';
+    document.getElementById('playerNumber').value = '';
+    document.getElementById('yes').checked = false;
+    document.getElementById('no').checked = false;
+    
+    document.getElementById('addPlayerMenu').classList.add('hidden');
+    document.getElementById('showInfo').innerHTML = "Player added successfully.";
 }
 
 function addPlayerRatings() {
-    console.log(teamOfPlayers.listPlayers());
-    let index = parseInt(prompt("Enter player index to add ratings:"));
-    let ratings = [];
-    for (let i = 0; i < 5; i++) {
-        let rating = parseInt(prompt(`Enter rating ${i+1} (0-5):`));
-        ratings.push(rating);
+    const playerIndex = document.getElementById('playerSelect').value;
+    const ratings = [
+        parseInt(document.getElementById('rating1').value),
+        parseInt(document.getElementById('rating2').value),
+        parseInt(document.getElementById('rating3').value),
+        parseInt(document.getElementById('rating4').value),
+        parseInt(document.getElementById('rating5').value)
+    ];
+    
+    teamOfPlayers.players[playerIndex].ratings = ratings;
+    
+    // Clear form
+    document.getElementById('rating1').value = '';
+    document.getElementById('rating2').value = '';
+    document.getElementById('rating3').value = '';
+    document.getElementById('rating4').value = '';
+    document.getElementById('rating5').value = '';
+    
+    // Update the display
+    updatePlayersList();
+    document.getElementById('showInfo').innerHTML = "Ratings added successfully.";
+}
+
+function updatePlayerDropdown() {
+    const select = document.getElementById('playerSelect');
+    select.innerHTML = ''; // Clear existing options
+    
+    //if no players available
+    if (teamOfPlayers.players.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No players available';
+        option.disabled = true;
+        option.selected = true;
+        select.appendChild(option);
+        return;
     }
-    teamOfPlayers.players[index].ratings = ratings;
-    console.log("Ratings added successfully.");
-}
-
-function addToSquad() {
-    console.log(teamOfPlayers.listPlayers());
-    let index = parseInt(prompt("Enter player index to add to squad:"));
-    teamOfPlayers.players[index].currentSquadMember = true;
-    console.log("Player added to squad.");
-}
-
-function removeFromSquad() {
-    console.log(teamOfPlayers.listPlayers());
-    let index = parseInt(prompt("Enter player index to remove from squad:"));
-    let player = teamOfPlayers.deRegisterPlayer(index);
-    if (player) {
-        console.log("Player removed from squad.");
-    } else {
-        console.log("Player not found or already not in squad.");
-    }
-}
-
-function listAllPlayers() {
-    console.log(teamOfPlayers.listPlayers());
-}
-
-function listCurrentSquad() {
-    console.log(teamOfPlayers.listCurrentPlayers());
-}
-
-function listAboveAverage() {
-    let rating = parseFloat(prompt("Enter minimum average rating:"));
-    console.log(teamOfPlayers.listPlayersAboveGivenAverageRating(rating));
-}
-
-function listWithAverages() {
-    console.log(teamOfPlayers.listOfPlayerWithAverageRating());
-}
-
-function displayAverageRating() {
-    console.log("Average player rating: " + teamOfPlayers.averageOfPlayersAvgRating());
-}
-
-function displayLowestRating() {
-    let player = teamOfPlayers.playerWithLowestAverageRating();
-    if (player) {
-        console.log("Player with lowest average rating:\n" + player.toString());
-    } else {
-        console.log("No players in the team.");
+    
+    for (let i = 0; i < teamOfPlayers.players.length; i++) {
+        const player = teamOfPlayers.players[i];
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = player.name + ' (' + player.playerNumber + ')';
+        select.appendChild(option);
     }
 }
 
-function displayHighestRating() {
-    let player = teamOfPlayers.playerWithHighestAverageRating();
-    if (player) {
-        console.log("Player with highest average rating:\n" + player.toString());
-    } else {
-        console.log("No players in the team.");
+function updatePlayersList() {
+    const playersList = document.getElementById('playersList');
+    playersList.innerHTML = '';
+    
+    for (let i = 0; i < teamOfPlayers.players.length; i++) {
+        const player = teamOfPlayers.players[i];
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'player-item';
+        
+        let ratingsText = 'No ratings yet';
+        if (player.ratings && player.ratings.length > 0) {
+            ratingsText = 'Ratings: ' + player.ratings.join(', ');
+        }
+        
+        playerDiv.innerHTML = 
+            '<strong>' + player.name + '</strong> (' + player.playerNumber + ')<br>' +
+            ratingsText + '<br>' +
+            'Average Rating: ' + player.averageRating() + '<br>' +
+            'Current Squad: ' + (player.currentSquadMember ? 'Yes' : 'No') + '<br>' +
+            '<hr>';
+        
+        playersList.appendChild(playerDiv);
     }
-}
-
-function exit() {
-    console.log("Exiting application...");
-    noLoop();
 }
 
 function draw() {

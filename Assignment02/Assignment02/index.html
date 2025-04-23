@@ -2,14 +2,96 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Title</title>
-        <link rel="stylesheet" href="styles.css" />
-        <script src="script.js"></script>
+        <title>Team Management System</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+        <script src="player.js"></script>
+        <script src="team.js"></script>
+        <script src="sketch.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+            .hidden {
+                display: none;
+            }
+            .menu {
+                border: 1px solid #ccc;
+                padding: 20px;
+                margin: 10px;
+                border-radius: 5px;
+            }
+            .info {
+                border: 1px solid #ccc;
+                padding: 20px;
+                margin: 10px;
+                border-radius: 5px;
+                min-height: 100px;
+            }
+            button {
+                margin: 5px;
+                padding: 5px 10px;
+            }
+            input[type="text"], input[type="number"] {
+                margin: 5px;
+                padding: 5px;
+            }
+            .player-list {
+                max-height: 200px;
+                overflow-y: auto;
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin: 10px;
+            }
+        </style>
     </head>
     <body>
-        <h1 class="title">Hello World</h1>
-        <div id="mainDiv">Hello Div</div>
-        <br />
-        <button onclick="buttonClicked()">Click me</button>
+        <h1 class="title">Team Management System</h1>
+        <div id="promptMenu" class="menu">
+            <h2>Welcome to Team Management System</h2>
+            <p>Enter the number of players in the team:</p>
+            <input type="number" id="numPlayers" min="0" max="40" required>
+            <button onclick="createTeam()">Create Team</button>
+        </div>
+        <div id="mainMenu" class="menu hidden">
+            <h2>Main Menu</h2>
+            <input type="radio" name="mainChoices" value="addPlayer"> Add a Player<br>
+            <input type="radio" name="mainChoices" value="addRatings"> Add player ratings<br>
+            <input type="radio" name="mainChoices" value="addToSquad"> Add a player to the squad<br>
+            <input type="radio" name="mainChoices" value="removeFromSquad"> Remove a player from the squad<br>
+            <input type="radio" name="mainChoices" value="listPlayers"> List all players<br>
+            <input type="radio" name="mainChoices" value="listCurrentSquad"> List all players currently on the squad<br>
+            <input type="radio" name="mainChoices" value="listAboveAverage"> List players above given average<br>
+            <input type="radio" name="mainChoices" value="listWithAverages"> List players with their average ratings<br>
+            <input type="radio" name="mainChoices" value="displayAverage"> Display average player rating<br>
+            <input type="radio" name="mainChoices" value="displayLowest"> Display player with lowest average rating<br>
+            <input type="radio" name="mainChoices" value="displayHighest"> Display player with highest average rating<br>
+            <button onclick="mainMenuSelection()">Select</button>
+        </div>
+        <div id="addPlayerMenu" class="menu hidden">
+            <h2>Add Player</h2>
+            <p>Name: <input type="text" id="name" required></p>
+            <p>Player Number (1-23): <input type="number" id="playerNumber" min="1" max="23" required></p>
+            <p>Current Squad Member: 
+                <input type="radio" name="squadMember" id="yes" value="true"> Yes
+                <input type="radio" name="squadMember" id="no" value="false"> No
+            </p>
+            <button onclick="addPlayer()">Add Player</button>
+        </div>
+        <div id="addRatingsMenu" class="menu hidden">
+            <h2>Add Player Ratings</h2>
+            <p>Select Player: <select id="playerSelect" required></select></p>
+            <p>Rating 1 (0-5): <input type="number" id="rating1" min="0" max="5" required></p>
+            <p>Rating 2 (0-5): <input type="number" id="rating2" min="0" max="5" required></p>
+            <p>Rating 3 (0-5): <input type="number" id="rating3" min="0" max="5" required></p>
+            <p>Rating 4 (0-5): <input type="number" id="rating4" min="0" max="5" required></p>
+            <p>Rating 5 (0-5): <input type="number" id="rating5" min="0" max="5" required></p>
+            <button onclick="addPlayerRatings()">Add Ratings</button>
+        </div>
+        <div id="allPlayersRatings" class="menu hidden">
+            <h2>All Players with Ratings</h2>
+            <div id="playersList" class="player-list"></div>
+        </div>
+        <div id="showInfo" class="info"></div>
     </body>
 </html>
