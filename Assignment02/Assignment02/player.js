@@ -1,15 +1,29 @@
 class Player {
   #name;
   #playerNumber;
-  #ratings[];
+  #ratings = [];
   #currentSquadMember;
 
+  constructor(name = "", currentSquadMember = false, playerNumber = 23) {
+    // Set name with 20 character limit
+    if (name.length > 20) {
+      this.#name = name.substring(0, 20);
+    } else {
+      this.#name = name;
+    }
 
-  constructor(name, currentSquadMember, playerNumber) {
-    this.name = name;
-    this.currentSquadMember = currentSquadMember;
-    this.playerNumber = playerNumber;
-    this.#ratings = [];
+    // Set player number (1-23)
+    if (Number.isInteger(playerNumber) && playerNumber >= 1 && playerNumber <= 23) {
+      this.#playerNumber = playerNumber;
+    } else {
+      this.#playerNumber = 23; // Default value
+    }
+
+    // Initialize ratings array with 5 zeros
+    this.#ratings = new Array(5).fill(0);
+
+    // Set squad membership status
+    this.#currentSquadMember = Boolean(currentSquadMember);
   }
 
   get name() {
@@ -17,9 +31,7 @@ class Player {
   }
 
   set name(name) {
-    if (name.length > 20) {
-      this.#name = name.substring(0, 20);
-    } else {
+    if (name.length <= 20) {
       this.#name = name;
     }
   }
