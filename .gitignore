@@ -1,0 +1,9 @@
+# https://git-scm.com/docs/gitignore
+# https://help.github.com/articles/ignoring-files
+# Example .gitignore files: https://github.com/github/gitignore
+/bower_components/
+/node_modules/
+/Assignment02/Store Project/
+/Assignment02/Supplementary materials/
+/week06/
+/Assignment01/
