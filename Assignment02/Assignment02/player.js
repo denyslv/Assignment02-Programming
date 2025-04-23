@@ -17,7 +17,11 @@ class Player {
   }
 
   set name(name) {
-    this.#name = name;
+    if (name.length > 20) {
+      this.#name = name.substring(0, 20);
+    } else {
+      this.#name = name;
+    }
   }
 
   get playerNumber() {
