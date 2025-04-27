@@ -1,8 +1,39 @@
 let teamOfPlayers;
 
+// Initialize team with test data
+function initializeTestData() {
+    const names = [
+        "John Smith", "Emma Johnson", "Michael Brown", "Sarah Davis", "David Wilson",
+        "Lisa Anderson", "James Taylor", "Jennifer Martinez", "Robert Thomas", "Patricia Garcia"
+    ];
+    
+    const ratings = [
+        [1, 2, 3, 4, 5],
+        [0, 0, 0, 0, 0],
+        [3, 4, 4, 3, 5],
+        [0, 1, 2, 1, 0],
+        [3, 4, 5, 3, 4],
+        [3, 3, 3, 3, 3],
+        [4, 4, 3, 4, 5],
+        [3, 5, 4, 3, 4],
+        [4, 4, 4, 4, 4],
+        [5, 5, 5, 5, 5]
+    ];
+    
+    for (let i = 0; i < names.length; i++) {
+        //Math.random() randomly picks if the player is a current squad member
+        const player = new Player(names[i], Math.random() > 0.5, i + 1);
+        player.ratings = ratings[i];
+        teamOfPlayers.addPlayer(player);
+    }
+    
+    updateShowInfo("Test data initialized with 10 players.");
+}
+
 // Initialize team when page loads
 window.onload = function() {
     teamOfPlayers = new Team(0); // Create an empty team
+    initializeTestData(); // Add test data
 };
 
 // function to update the showInfo div, if isError is true, add the error-message class
