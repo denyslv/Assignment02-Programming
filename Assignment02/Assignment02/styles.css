@@ -1,3 +1,223 @@
+:root {
+    --primary-color: #4a6bff;
+    --primary-hover: #3a5bef;
+    --background-dark: #1a1a2e;
+    --background-light: #f8f9fa;
+    --card-dark: #16213e;
+    --card-light: #ffffff;
+    --text-dark: #ffffff;
+    --text-light: #2c3e50;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+/* Hide p5 canvas */
+canvas {
+    display: none !important;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
 .title {
-    color: green;
+    text-align: center;
+    color: var(--text-dark);
+    margin: 2rem 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+    display: none;
+}
+
+.menu {
+    background-color: var(--card-dark);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info {
+    background-color: var(--card-dark);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin: 1.5rem;
+    min-height: 100px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none; /* Hide by default */
+}
+
+/* Show the info div when it has content */
+.info:not(:empty) {
+    display: block;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    margin: 0.5rem;
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input[type="text"], input[type="number"] {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    padding: 0.8rem 1rem;
+    color: var(--text-dark);
+    transition: var(--transition);
+    margin: 0.5rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.player-list {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--card-dark);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.menu-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.menu-button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.menu-button:active {
+    transform: translateY(0);
+}
+
+.rating-input {
+    width: 60px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    padding: 0.8rem;
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.rating-input:invalid {
+    border-color: #ff4444;
+}
+
+.rating-input:valid {
+    border-color: #44ff44;
+}
+
+/* Light theme support */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: var(--background-light);
+        color: var(--text-light);
+    }
+
+    .menu, .info, .player-list {
+        background-color: var(--card-light);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="text"], input[type="number"], .rating-input {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.1);
+        color: var(--text-light);
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+        background-color: rgba(0, 0, 0, 0.08);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 720px) {
+    .button-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .title {
+        font-size: 2rem;
+        margin: 1.5rem 0;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+}
+
+.error-message {
+    color: rgb(244, 108, 108);
 }

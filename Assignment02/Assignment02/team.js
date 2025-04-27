@@ -32,26 +32,34 @@ class Team {
     addPlayer(player) {
         //if player is valid object
         if (player) {
+            // Check if player number already exists
+            for (let i = 0; i < this.#players.length; i++) {
+                if (this.#players[i].playerNumber === player.playerNumber) {
+                    return false; // Return false if player number exists
+                }
+            }
             this.#players.push(player);
             this.#total++;
+            return true; // Return true if player was added successfully
         }
+        return false; // Return false if player is invalid
     }
 
     listPlayers() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let result = "";
         for (let i = 0; i < this.#players.length; i++) {
             //add details of each player to the result string
             result += this.#players[i].toString() + "\n";
         }
-        return result;
+        return { message: result, isError: false };
     }
 
     listCurrentPlayers() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let result = "";
         for (let i = 0; i < this.#players.length; i++) {
@@ -60,12 +68,15 @@ class Team {
                 result += this.#players[i].toString() + "\n";
             }
         }
-        return result;
+        if (result === "") {
+            return { message: "No players in the current squad", isError: true };
+        }
+        return { message: result, isError: false };
     }
 
     listOfPlayerWithAverageRating() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let result = "";
         for (let i = 0; i < this.#players.length; i++) {
@@ -74,12 +85,12 @@ class Team {
             //add player name and rounded average to result
             result += this.#players[i].name + ": " + Math.round(avg) + "\n";
         }
-        return result;
+        return { message: result, isError: false };
     }
 
     listPlayersAboveGivenAverageRating(rating) {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let result = "";
         //check each player
@@ -91,12 +102,15 @@ class Team {
                 result += this.#players[i].toString() + "\n";
             }
         }
-        return result;
+        if (result === "") {
+            return { message: "No players found with average rating above " + rating, isError: true };
+        }
+        return { message: result, isError: false };
     }
 
     playerWithLowestAverageRating() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let lowest = this.#players[0];
         for (let i = 1; i < this.#players.length; i++) {
@@ -108,12 +122,12 @@ class Team {
                 lowest = this.#players[i];
             }
         }
-        return lowest;
+        return { message: lowest.toString(), isError: false };
     }
 
     playerWithHighestAverageRating() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let highest = this.#players[0];
         for (let i = 1; i < this.#players.length; i++) {
@@ -125,31 +139,54 @@ class Team {
                 highest = this.#players[i];
             }
         }
-        return highest;
+        return { message: highest.toString(), isError: false };
     }
 
     averageOfPlayersAvgRating() {
         if (this.isEmpty()) {
-            return "No players in the team";
+            return { message: "No players in the team", isError: true };
         }
         let sum = 0;
         //add up all players' average ratings
         for (let i = 0; i < this.#players.length; i++) {
             sum += this.calculateAverageRating(this.#players[i].ratings);
         }
-        return sum / this.#total;
+        return { message: (sum / this.#total).toString(), isError: false };
     }
 
-    deRegisterPlayer(indexToDeRegister) {
-        if (indexToDeRegister < 0 || indexToDeRegister >= this.#total) {
-            return null;
-        }
-        const player = this.#players[indexToDeRegister];
-        if (!player.currentSquadMember) {
+    deRegisterPlayer(playerNumber) {
+        const player = this.findPlayerByNumber(playerNumber);
+        if (!player || !player.currentSquadMember) {
             return null;
         }
         player.currentSquadMember = false;
         return player;
+    }
+
+    findPlayerByNumber(playerNumber) {
+        for (let i = 0; i < this.#players.length; i++) {
+            if (this.#players[i].playerNumber === playerNumber) {
+                return this.#players[i];
+            }
+        }
+        return null;
+    }
+
+    removePlayer(playerNumber) {
+        const player = this.findPlayerByNumber(playerNumber);
+        if (!player) {
+            return { message: "Player not found.", isError: true };
+        }
+        
+        // Remove player from array
+        for (let i = 0; i < this.#players.length; i++) {
+            if (this.#players[i].playerNumber === playerNumber) {
+                this.#players.splice(i, 1);
+                this.#total--;
+                return { message: "Player removed successfully.", isError: false };
+            }
+        }
+        return { message: "Error removing player.", isError: true };
     }
 
     //check if team is empty

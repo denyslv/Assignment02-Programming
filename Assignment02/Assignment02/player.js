@@ -5,8 +5,8 @@ class Player {
   #currentSquadMember;
 
   constructor(name = "", currentSquadMember = false, playerNumber = 23) {
-    // Set name with 20 character limit
     if (name.length > 20) {
+      //using substring to limit the name to 20 characters
       this.#name = name.substring(0, 20);
     } else {
       this.#name = name;
@@ -40,6 +40,7 @@ class Player {
     return this.#playerNumber;
   }
 
+  // set player number in the range 1-23
   set playerNumber(number) {
     if (!Number.isInteger(number) || number < 1 || number > 23) {
       console.log('Player number must be an integer between 1 and 23');
@@ -59,8 +60,8 @@ class Player {
       return;
     }
     
-    // Validate and set ratings
-    //used https://www.w3schools.com/jsref/jsref_map.asp Ma method
+    // Check if ratings are in the range 0-5 and set to 0 if not
+    //used https://www.w3schools.com/jsref/jsref_map.asp Map method
     //The Array.map() method creates a new array from the results of calling a function for every element.
     this.#ratings = ratings.map(function(rating) {
       const num = Number(rating);
@@ -80,10 +81,6 @@ class Player {
   }
 
   toString() {
-     var txt = this.name + " " +
-         this.playerNumber + " " +
-         this.ratings + " " +
-         this.currentSquadMember;
-    return txt;
+    return "[" + this.playerNumber + "] " + this.name + " | Ratings: " + this.ratings.join(" : ") + " | " + (this.currentSquadMember ? "Is" : "Isn't") + " a current squad member" + "\n";
   }
 }
