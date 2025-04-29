@@ -51,8 +51,8 @@ class Team {
         }
         let result = "";
         for (let i = 0; i < this.#players.length; i++) {
-            //add details of each player to the result string
-            result += this.#players[i].toString() + "\n";
+            //add details of each player to the result string with HTML line break
+            result += this.#players[i].toString() + "<br>";
         }
         return { message: result, isError: false };
     }
